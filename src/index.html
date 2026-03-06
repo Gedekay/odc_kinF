@@ -6,8 +6,119 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .rain-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .rain-element {
+      position: absolute;
+      color: #FF6B00;
+      font-size: 24px;
+      animation: fall linear infinite;
+      opacity: 0.8;
+      text-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+    }
+
+    .ball {
+      width: 20px;
+      height: 20px;
+      background: #FF6B00;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #FF6B00;
+    }
+
+    .letter {
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Assure que le contenu de l'app soit au-dessus de la pluie */
+    app-root {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
 </head>
 <body>
+  <div class="rain-container" id="rainContainer"></div>
   <app-root></app-root>
+
+  <script>
+    function createRain() {
+      const container = document.getElementById('rainContainer');
+      const letters = ['O', 'D', 'C', 'K', 'i', 'n', 'F', 'r', '⚫', '●', '○', '◉','orange', '21', 'js', 'ts', 'kt', 'css', ];
+      
+      setInterval(() => {
+        // Créer un nouvel élément de pluie
+        const element = document.createElement('div');
+        element.className = 'rain-element';
+        
+        // Décider aléatoirement si c'est une boule ou une lettre
+        if (Math.random() > 0.5) {
+          // C'est une boule
+          element.classList.add('ball');
+        } else {
+          // C'est une lettre
+          element.classList.add('letter');
+          element.textContent = letters[Math.floor(Math.random() * letters.length)];
+        }
+        
+        // Position horizontale aléatoire
+        element.style.left = Math.random() * 100 + '%';
+        
+        // Taille aléatoire
+        const size = 15 + Math.random() * 30;
+        if (element.classList.contains('ball')) {
+          element.style.width = size + 'px';
+          element.style.height = size + 'px';
+        } else {
+          element.style.fontSize = size + 'px';
+        }
+        
+        // Durée d'animation aléatoire
+        element.style.animationDuration = 3 + Math.random() * 4 + 's';
+        
+        // Délai aléatoire
+        element.style.animationDelay = Math.random() * 2 + 's';
+        
+        // Ajouter au conteneur
+        container.appendChild(element);
+        
+        // Supprimer l'élément après l'animation
+        setTimeout(() => {
+          element.remove();
+        }, 8000);
+        
+      }, 200); // Créer un nouvel élément toutes les 200ms
+    }
+
+    // Démarrer la pluie au chargement de la page
+    window.addEventListener('load', createRain);
+  </script>
 </body>
 </html>
