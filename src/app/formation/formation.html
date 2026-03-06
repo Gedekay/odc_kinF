@@ -1,0 +1,120 @@
+@if(loading()) {
+  <div class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-orange-500 border-t-transparent"></div>
+    <p class="ml-3 text-gray-600">Chargement des formations...</p>
+  </div>
+}
+
+@if(!loading() && formations().length > 0) {
+  <div class="flex items-center justify-center flex-wrap gap-5">
+    @for (f of formations(); track f.id) {
+      <div class="backdrop-blur-md bg-white/30 border-b border-white/20 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border-l-4 border-orange-500 mt-20">
+        <div class="p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-2">{{f.nom}}</h3>
+          <p class="text-gray-600 mb-4">{{f.description}}</p>
+          <div class="flex items-center text-sm text-gray-500 mb-4">
+            <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span>{{f.date_debut}} - {{f.date_fin}}</span>
+          </div>
+          <button (click)="openModal(f.id)" 
+                  class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105">
+            Postuler
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+@if(modalOpen()) {
+  <!-- Modal avec fond transparent flouté -->
+  <div class="fixed inset-0 z-50 overflow-y-auto">
+    <!-- Overlay avec flou et fond orange transparent -->
+    <div class="fixed inset-0 bg-orange-500/20 backdrop-blur-md transition-opacity"></div>
+    
+    <!-- Centreur du modal -->
+    <div class="flex min-h-full items-center justify-center p-4">
+      <!-- Contenu du modal avec fond blanc -->
+      <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all">
+        
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Inscription à la formation
+        </h2>
+
+        <form (submit)="submitCandidat(); $event.preventDefault()" class="space-y-6">
+          
+          <!-- Champ Nom -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+            <input type="text"
+                   [(ngModel)]="candidat.nom_complet"
+                   name="nom"
+                   required
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
+                   placeholder="Votre nom complet" />
+          </div>
+
+          <!-- Champ Email -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input type="email"
+                   [(ngModel)]="candidat.email"
+                   name="email"
+                   required
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
+                   placeholder="votre@email.com" />
+          </div>
+
+          <!-- Champ Téléphone -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+            <input type="tel"
+                   [(ngModel)]="candidat.tel"
+                   name="tel"
+                   required
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
+                   placeholder="Votre numéro" />
+          </div>
+
+          <!-- Sélecteur Université -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Université</label>
+            <select [(ngModel)]="candidat.universite_id"
+                    name="universite"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition bg-white">
+              
+              <option value="" disabled selected>Sélectionnez une université</option>
+              
+              @if(universites().length > 0) {
+                @for(u of universites(); track u.id) {
+                  <option [value]="u.id" class="py-1">
+                    {{u.nom}}
+                  </option>
+                }
+              }
+            </select>
+          </div>
+
+          <!-- Boutons d'action -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-4">
+            <button type="submit" 
+                    class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+              Envoyer ma candidature
+            </button>
+            
+            <button type="button" 
+                    (click)="closeModal()"
+                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+              Fermer
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+}
